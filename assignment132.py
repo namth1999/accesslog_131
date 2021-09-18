@@ -7,6 +7,8 @@ import string
 import operator
 from map_reduce_lib import *
 from datetime import datetime
+from os import walk
+import os.path
 
 
 def mapper(line):
@@ -30,17 +32,24 @@ def reducer(key_value_item):
 
     key, values = key_value_item
 
+    y_m =[]
+    hits =[]
     totalHits = 0
     oldKey = None
     for val in values:
         curKey = val
         if oldKey and oldKey != curKey:
+            y_m.append(oldKey)
+            hits.append(totalHits)
+
             totalHits = 0
         oldKey = curKey
         totalHits += 1
+    if oldKey != None:
+        y_m.append(oldKey)
+        hits.append(totalHits)
 
-
-    return key, oldKey, totalHits
+    return key,y_m,hits
 
 
 if __name__ == '__main__':
