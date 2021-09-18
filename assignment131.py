@@ -34,17 +34,28 @@ def reducer_ip_hits(key_value_item):
     for v in values:
         time, count = v.split('#')
         total_count += int(count)
-        time_list.append(datetime.strptime(time, "%Y-%m-%d %H:%M:%S").month)
+        time_list.append(datetime.strptime(time, "%Y-%m-%d %H:%M:%S"))
 
     time_list = sorted(time_list)
-    print(time_list)
-    total_time = time_list[-1] - time_list[0]
-    if total_time == 0:
-        hit_period = total_count
-        return key, '%s/month' % hit_period
+    start_date = time_list[0]
+    end_date = time_list[-1]
+    time_delta = end_date.month - start_date.month + 1
+    if start_date.month == end_date.month:
+        if start_date.year == end_date.year:
+            hit_period = total_count
+            return key, '%s/month' % hit_period
+        else:
+            total_periods = 12 * (end_date.year - start_date.year)
+            hit_period = total_count / total_periods
+            return key, '%s/month' % hit_period
     else:
-        hit_period = total_count / total_time
-        return key, '%s/month' % hit_period
+        if start_date.year == end_date.year:
+            hit_period = total_count / time_delta
+            return key, '%s/month' % hit_period
+        else:
+            total_periods = 12 * (end_date.year - start_date.year) + time_delta
+            hit_period = total_count / total_periods
+            return key, '%s/month' % hit_period
 
 
 if __name__ == '__main__':
