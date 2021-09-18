@@ -74,4 +74,5 @@ if __name__ == '__main__':
 
     print('Ip hits per month/year:')
     for ip, year_month, hits in results:
-        print('{0}\t{1}\t{2}'.format(ip, year_month, hits))
+        for i in range(0, len(year_month)):
+         print('{0}\t{1}\t{2}'.format(ip, year_month[i], hits[i]))
