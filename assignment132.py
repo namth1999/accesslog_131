@@ -18,7 +18,9 @@ def mapper(line):
     data = line.strip().split(" ")
     if len(data) == 10:
         ip, identity, username, time, zone, method, path, protocol, status, size = data
+        #Remove the [ of time column to use strptime()
         time = time.strip("[")
+        #Retrieve year and month from data and return as Y-M
         year_month = datetime.strptime(time, '%d/%b/%Y:%H:%M:%S').strftime('%Y-%m')
         output.append((ip, year_month))
 
@@ -26,8 +28,8 @@ def mapper(line):
 
 
 def reducer(key_value_item):
-    """ Reduce function for the word count job.
-    Converts partitioned shakespear (key, [value]) to a summary of form (key, value).
+    """ Reduce function for the third assignment.
+    Converts partitioned data (key, [value]) to a summary of form (key, year-month and totalHits).
     """
 
     key, values = key_value_item
@@ -35,13 +37,14 @@ def reducer(key_value_item):
     y_m =[]
     hits =[]
     totalHits = 0
+    #temp key for year_month
     oldKey = None
     for val in values:
+        #Current year_month value
         curKey = val
         if oldKey and oldKey != curKey:
             y_m.append(oldKey)
             hits.append(totalHits)
-
             totalHits = 0
         oldKey = curKey
         totalHits += 1
@@ -74,5 +77,6 @@ if __name__ == '__main__':
 
     print('Ip hits per month/year:')
     for ip, year_month, hits in results:
+        # loop through the array of year_month if the website was hit by the IP in mulitple months
         for i in range(0, len(year_month)):
          print('{0}\t{1}\t{2}'.format(ip, year_month[i], hits[i]))
