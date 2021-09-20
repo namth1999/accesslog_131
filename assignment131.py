@@ -8,8 +8,8 @@ from map_reduce_lib import *
 
 
 def mapper_ip_hits(line):
-    """ Map function for the word count job.
-    Splits line into words, removes low information words (i.e. stopwords) and outputs (key, 1).
+    """ Map function for assignment 3.
+    Sync between timezone and and outputs (key, timezone,1).
     """
     # process_print('is processing `%s`' % line)
     output = []
@@ -25,8 +25,8 @@ def mapper_ip_hits(line):
 
 
 def reducer_ip_hits(key_value_item):
-    """ Reduce function for the word count job.
-    Converts partitioned shakespeare (key, [value]) to a summary of form (key, value).
+    """ Reduce function for assignment 3 .
+    Converts partitioned data (key, [value]) to a summary of form (key, hit period).
     """
     key, values = key_value_item
     time_list = []
@@ -36,7 +36,7 @@ def reducer_ip_hits(key_value_item):
         time, count = v.split('#')
         total_count += int(count)
         time_list.append(datetime.strptime(time, "%Y-%m-%d %H:%M:%S"))
-
+    #Sort the result list
     time_list = sorted(time_list)
     start_date = time_list[0]
     end_date = time_list[-1]
